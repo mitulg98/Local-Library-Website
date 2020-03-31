@@ -1,0 +1,18 @@
+{% extends "catalog/base_generic.html" %}
+{% block title %}
+<title>Local Library | Homepage</title>
+{% endblock %}
+{% block content %}	
+	<h1>Local Library Homepage</h1>
+	<p>Welcome to Local Library a website developed by <em>Mozilla Developer Network</em>!</p>
+	<h2>Dynamic Content</h2>
+	<p>The Library has the following record units:</p>
+	<ul>
+	    <li><strong>Books:</strong> {{ num_books }}</li>
+	    <li><strong>Copies:</strong> {{ num_instances }}</li>
+	    <li><strong>Copies available:</strong> {{ num_instances_available }}</li>
+	    <li><strong>Authors:</strong> {{ num_authors }}</li>
+	    <li><strong>Genres:</strong> {{ num_genres }}</li>
+	</ul>
+	<p>{% if num_visits == -1 %}Please enable cookies to know your visit frequency{% else %}You have visited this page {{num_visits}} {% if num_visits == 1 %}time{% else %}times{% endif %}{% endif %}.</p>
+{% endblock %}

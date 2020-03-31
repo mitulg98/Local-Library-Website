@@ -1,0 +1,12 @@
+{% extends 'catalog/base_generic.html' %}
+
+{% block content %}
+	<h1>Update Author</h1>
+	<form action="{% url 'author-update' author.pk %}" method="POST">
+	{% csrf_token %}
+		<table>
+			{{ form.as_table }}
+		</table>
+		<input type="submit" value="Update">
+	</form>
+{% endblock %}

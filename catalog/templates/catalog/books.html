@@ -1,0 +1,22 @@
+{% extends 'catalog/base_generic.html' %}
+{% block title %}
+<title>Local Library | Book List</title>
+{% endblock %}
+{%block content %}
+	<h1>Book List</h1>
+	{% if my_book_list %}
+		<ul>
+			{% for book in my_book_list %}
+				<li>
+					<a href="{{ book.get_absolute_url }}"><strong>{{book.title}}</strong></a><em>({{ book.author }})</em>
+				</li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		<p>There are no books in the library</p>
+	{% endif %}
+	{% if perms.catalog.can_mark_returned %}
+		<p><a class="text-success" href="{% url 'book-create' %}">Add Book</a></p>
+	{% endif %}
+
+{% endblock %}

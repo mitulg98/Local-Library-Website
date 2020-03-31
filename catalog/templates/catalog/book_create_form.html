@@ -1,0 +1,12 @@
+{% extends 'catalog/base_generic.html' %}
+
+{% block content %}
+	<h1>Add Book</h1>
+	<form action="{% url 'book-create' %}" method="POST">
+	{% csrf_token %}
+		<table>
+			{{ form.as_table }}
+		</table>
+		<input type="submit" value="Save">
+	</form>
+{% endblock %}

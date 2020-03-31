@@ -1,0 +1,22 @@
+{% extends 'catalog/base_generic.html' %}
+
+{% block title %}
+	<title>Author List | Local Library</title>
+{% endblock %}
+
+{% block content %}
+	<h1>Author List</h1>
+	{% if author_list %}
+		<ul>
+			{% for person in author_list %}
+				<li><strong><a href='{% url "author-detail" person.pk %}'>{{person}}</a></strong></li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		<p>No author-specific record is present</p>
+	{% endif %}
+	{% if perms.catalog.can_mark_returned %}
+		<p><a class="text-success" href="{% url 'author-create' %}">Add Author</a></p>
+	{% endif %}
+
+{% endblock %}
