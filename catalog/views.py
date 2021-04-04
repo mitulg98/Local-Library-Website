@@ -12,7 +12,6 @@ import datetime
 
 
 # Create your views here.
-@login_required
 def index(request):
 	"""view function for the home page of the web site"""
 
