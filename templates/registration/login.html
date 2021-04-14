@@ -24,10 +24,10 @@
 				<td>{{ form.password }}</td>
 			</tr>
 		</table>
-		<input type="submit" value="login" />
+		<input type="submit" value="login">
     	<input type="hidden" name="next" value="{{ next }}" />
     </form>
 
-    <p><a href="{% url 'password_change' %}">Forgot Password?</a></p>
+    <p><a href="{% url 'password_reset' %}">Forgot Password?</a></p>
 
 {% endblock %}

@@ -42,7 +42,7 @@ def index(request):
 	template = loader.get_template('catalog/index.html')
 	return HttpResponse(template.render(context,request))
 
-@permission_required('catalog.can_mark_returned')
+@permission_required('catalog.can_mark_returned', raise_exception=True)
 def renew_book_librarian(request,pk):
 	bookinstance=get_object_or_404(BookInstance,pk=pk)
 
@@ -64,7 +64,7 @@ def renew_book_librarian(request,pk):
 	}
 	return render(request,'catalog/book_renewal_librarian.html',context)
 
-@permission_required('catalog.can_mark_returned')
+@permission_required('catalog.can_mark_returned', raise_exception=True)
 def create_author(request):
 
 	if request.method=="POST":
@@ -85,7 +85,7 @@ def create_author(request):
 	}
 	return render(request,'catalog/author_create_form.html',context)
 
-@permission_required('catalog.can_mark_returned')
+@permission_required('catalog.can_mark_returned', raise_exception=True)
 def update_author(request,pk):
 	author=get_object_or_404(Author,pk=pk)
 
@@ -105,7 +105,7 @@ def update_author(request,pk):
 	}
 	return render(request,'catalog/author_update_form.html',context)
 
-@permission_required('catalog.can_mark_returned')
+@permission_required('catalog.can_mark_returned', raise_exception=True)
 def create_book(request):
 
 	if request.method=="POST":
@@ -167,20 +167,23 @@ class AllBorrowedBooksListView(PermissionRequiredMixin,generic.ListView):
 	def get_queryset(self):
 		return BookInstance.objects.filter(status__exact='o').order_by('due_back')
 
-class AuthorDelete(DeleteView,PermissionRequiredMixin):
+class AuthorDelete(PermissionRequiredMixin,DeleteView):
 
 	model=Author
 	success_url=reverse_lazy('author')
 	template_name_suffix='_delete_form'
+	permission_required='catalog.can_mark_returned'
 
-class BookUpdate(UpdateView,PermissionRequiredMixin):
+class BookUpdate(PermissionRequiredMixin,UpdateView):
 
 	model=Book
 	fields='__all__'
 	template_name_suffix='_update_form'
+	permission_required='catalog.can_mark_returned'
 
-class BookDelete(DeleteView,PermissionRequiredMixin):
+class BookDelete(PermissionRequiredMixin,DeleteView):
 
 	model=Book
 	success_url=reverse_lazy('books')
 	template_name_suffix='_delete_form'
+	permission_required='catalog.can_mark_returned'
