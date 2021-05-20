@@ -21,11 +21,13 @@ from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
+from catalog.forms import EmailValidationOnForgotPassword
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('catalog/',include('catalog.urls')),
+    path('accounts/password_reset/', auth.views.PasswordResetView.as_view(form_class = EmailValidationOnForgotPassword), name='password_reset'),
     path('accounts/',include('django.contrib.auth.urls'))
 ]
 
