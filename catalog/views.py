@@ -1,9 +1,17 @@
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required,permission_required
+from .forms import RenewBookForm, AuthorForm, BookForm, UserRegistrationForm
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, get_object_or_404,redirect
-from .forms import RenewBookForm, AuthorForm, BookForm
+from django.utils.encoding import force_bytes, force_text
 from .models import Book, BookInstance, Author, Genre
+from django.template.loader import render_to_string
+from django.contrib.auth.models import User
+from django.contrib.auth import login
+from django.core.mail import send_mail
+from .tokens import account_activation_token
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from django.template import loader
@@ -41,6 +49,48 @@ def index(request):
 
 	template = loader.get_template('catalog/index.html')
 	return HttpResponse(template.render(context,request))
+
+def register(request): 
+
+	if request.method == 'POST':
+		registration_form = UserRegistrationForm(request.POST)
+
+		if(registration_form.is_valid()):
+			user = registration_form.save(commit=False)
+			user.is_active = False
+			user.save()
+			mail_subject = 'Email verification for Local Library Website'
+			current_site = get_current_site(request)
+			message = render_to_string('catalog/email_template.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+        	})
+			to_email = registration_form.cleaned_data['email']
+			send_mail(mail_subject, message, None, [to_email])
+			return render(request, 'catalog/email_sent.html')
+
+	else: 
+		registration_form = UserRegistrationForm()
+		
+	context = {
+		'form': registration_form
+	}	
+	return render(request, 'catalog/register.html', context)
+
+def activate(request, uidb64, token):
+	try:
+		uid = force_text(urlsafe_base64_decode(uidb64))
+		user = User.objects.get(pk=uid)
+	except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+		user = None
+	if user is not None and account_activation_token.check_token(user, token):
+		user.is_active = True
+		user.save()
+		login(request, user)
+	
+	return render(request, 'catalog/registration_completed.html')
 
 @permission_required('catalog.can_mark_returned', raise_exception=True)
 def renew_book_librarian(request,pk):

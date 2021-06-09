@@ -1,10 +1,23 @@
+from django.contrib.auth.forms import PasswordResetForm, UserCreationForm
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.forms import PasswordResetForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from .models import BookInstance, Author, Book
 from django import forms 
 import datetime
+
+class UserRegistrationForm(UserCreationForm):
+
+	class Meta(UserCreationForm.Meta):
+		fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
+
+	def clean_email(self):
+		email = self.cleaned_data['email']
+		username = self.cleaned_data['username']
+		if email and User.objects.filter(email=email).exclude(username=username).count():
+			raise ValidationError('This Email is already under use by some other user.', code='invalid')
+		
+		return email
 
 
 class EmailValidationOnForgotPassword(PasswordResetForm):

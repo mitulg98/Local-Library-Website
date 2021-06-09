@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
 	path('',views.index,name='index'),
+	path('register/',views.register,name='register'),
+	path('activate/<uidb64>/<token>/', views.activate, name='activate'),
 	path('books/',views.BookListView.as_view(),name='books'),
 	path('book/create/',views.create_book,name='book-create'),
 	path('authors/',views.AuthorListView.as_view(),name='author'),
